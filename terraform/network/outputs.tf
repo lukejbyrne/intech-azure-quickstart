@@ -17,3 +17,8 @@ output "subnet_name_2" {
   description = "The name of the created subnet 2."
   value       = azurerm_subnet.my_terraform_subnet_2.name
 }
+
+# Output Public IP
+output "public_ip_address" {
+  value = azurerm_public_ip.public_ip.ip_address
+}
