@@ -18,12 +18,6 @@ stages:
       - job: Terraform_Validate
         displayName: 'Terraform Validate'
         steps:
-          # Step 1: Install Terraform
-          - task: HashiCorpTerraformInstaller@0
-            displayName: 'Install Terraform'
-            inputs:
-              terraformVersion: $(TF_VERSION)
-
           # Step 2: Validate Terraform configuration
           - task: Terraform@0
             displayName: 'Terraform Validate'
