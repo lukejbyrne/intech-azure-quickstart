@@ -39,17 +39,3 @@ steps:
       environmentServiceNameAzureRM: $(azureServiceConnection)
       commandOptions: '-out=plan.tfplan'  # Output the plan to a file
       workingDirectory: 'terraform'  # Set the working directory
-
-  - task: TerraformTaskV2@2
-    inputs:
-      provider: 'azurerm'
-      command: 'apply'  # Run terraform apply
-      environmentServiceNameAzureRM: $(azureServiceConnection)
-      commandOptions: 'plan.tfplan'  # Apply the plan from the file
-      workingDirectory: 'terraform'  # Set the working directory
-
-  - task: PublishBuildArtifacts@1  # Optional: Publish artifacts (like plan or state files)
-    inputs:
-      pathToPublish: './terraform/terraform.tfstate'
-      artifactName: 'terraform'
-      publishLocation: 'Container'
