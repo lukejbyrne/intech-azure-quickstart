@@ -21,21 +21,3 @@ steps:
       terraformVersion: $(terraformVersion)
   
   - checkout: self  # Check out the repository
-
-  - task: TerraformTaskV2@2
-    inputs:
-      provider: 'azurerm'  # Azure provider
-      command: 'init'  # Initialize Terraform
-      backendServiceArm: $(azureServiceConnection)
-      backendAzureRmStorageAccountName: $(backendStorageAccount)
-      backendAzureRmContainerName: $(backendContainer)
-      backendAzureRmKey: $(backendKey)
-      workingDirectory: 'terraform'  # Set the working directory
-
-  - task: TerraformTaskV2@2
-    inputs:
-      provider: 'azurerm'
-      command: 'plan'  # Run terraform plan
-      environmentServiceNameAzureRM: $(azureServiceConnection)
-      commandOptions: '-out=plan.tfplan'  # Output the plan to a file
-      workingDirectory: 'terraform'  # Set the working directory
