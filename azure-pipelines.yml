@@ -1,8 +1,5 @@
 # Terraform Pipeline
-trigger:
-  branches:
-    include:
-      - main  # Trigger pipeline on commits to the main branch
+
 
 pool:
   vmImage: 'ubuntu-latest'  # Use an Ubuntu agent for the job
