@@ -1,5 +1,8 @@
 # Terraform Pipeline
-
+trigger:
+  branches:
+    include:
+      - main  # Trigger pipeline on changes to the main branch
 
 pool:
   vmImage: 'ubuntu-latest'  # Use an Ubuntu agent for the job
@@ -10,43 +13,52 @@ variables:
   backendStorageAccount: 'skinktfstate'  # Remote backend storage account
   backendContainer: 'tfstate'  # Remote backend storage container
   backendKey: 'terraform.tfstate'  # State file name in remote backend
-
+  
 jobs:
-  - job: terraformJob
+  - job: Job1
     steps:
-      - task: TerraformInstaller@0  # Install Terraform
+      - task: TerraformInstaller@0
         inputs:
           terraformVersion: $(terraformVersion)
-      
-      - checkout: self  # Check out the repository
+
+      - checkout: self
 
       - task: TerraformTaskV2@2
         inputs:
-          provider: 'azurerm'  # Azure provider
-          command: 'init'  # Initialize Terraform
+          provider: 'azurerm'
+          command: 'init'
           backendServiceArm: $(azureServiceConnection)
           backendAzureRmStorageAccountName: $(backendStorageAccount)
           backendAzureRmContainerName: $(backendContainer)
           backendAzureRmKey: $(backendKey)
-          workingDirectory: 'terraform'  # Set the working directory
+          workingDirectory: 'terraform'
 
+  - job: Job2
+    dependsOn: Job1
+    steps:
       - task: TerraformTaskV2@2
         inputs:
           provider: 'azurerm'
-          command: 'plan'  # Run terraform plan
+          command: 'plan'
           environmentServiceNameAzureRM: $(azureServiceConnection)
-          commandOptions: '-out=plan.tfplan'  # Output the plan to a file
-          workingDirectory: 'terraform'  # Set the working directory
+          commandOptions: '-out=plan.tfplan'
+          workingDirectory: 'terraform'
 
+  - job: Job3
+    dependsOn: Job2
+    steps:
       - task: TerraformTaskV2@2
         inputs:
           provider: 'azurerm'
-          command: 'apply'  # Run terraform apply
+          command: 'apply'
           environmentServiceNameAzureRM: $(azureServiceConnection)
-          commandOptions: 'plan.tfplan'  # Apply the plan from the file
-          workingDirectory: 'terraform'  # Set the working directory
+          commandOptions: 'plan.tfplan'
+          workingDirectory: 'terraform'
 
-      - task: PublishBuildArtifacts@1  # Optional: Publish artifacts (like plan or state files)
+  - job: PublishArtifacts
+    dependsOn: Job3
+    steps:
+      - task: PublishBuildArtifacts@1
         inputs:
           pathToPublish: './terraform/terraform.tfstate'
           artifactName: 'terraform'
