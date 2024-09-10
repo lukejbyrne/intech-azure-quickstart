@@ -1,39 +1,54 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
+# Terraform Pipeline
 trigger:
-- main
+  branches:
+    include:
+      - main  # Trigger pipeline on commits to the main branch
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'  # Use an Ubuntu agent for the job
+
+variables:
+  terraformVersion: '1.5.5'  # Specify the Terraform version
+  azureServiceConnection: 'intech'  # Azure service connection name
+  backendStorageAccount: 'skinktfstate'  # Remote backend storage account
+  backendContainer: 'tfstate'  # Remote backend storage container
+  backendKey: 'terraform.tfstate'  # State file name in remote backend
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  - task: TerraformInstaller@0  # Install Terraform
+    inputs:
+      terraformVersion: $(terraformVersion)
+  
+  - checkout: self  # Check out the repository
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  - task: TerraformTaskV2@2
+    inputs:
+      provider: 'azurerm'  # Azure provider
+      command: 'init'  # Initialize Terraform
+      backendServiceArm: $(azureServiceConnection)
+      backendAzureRmStorageAccountName: $(backendStorageAccount)
+      backendAzureRmContainerName: $(backendContainer)
+      backendAzureRmKey: $(backendKey)
+      workingDirectory: 'terraform'  # Set the working directory
 
-- task: TerraformInstaller@1
-  inputs:
-    terraformVersion: 'latest'
+  - task: TerraformTaskV2@2
+    inputs:
+      provider: 'azurerm'
+      command: 'plan'  # Run terraform plan
+      environmentServiceNameAzureRM: $(azureServiceConnection)
+      commandOptions: '-out=plan.tfplan'  # Output the plan to a file
+      workingDirectory: 'terraform'  # Set the working directory
 
-- task: TerraformTaskV4@4
-  inputs:
-    provider: 'azurerm'
-    command: 'validate'
+  - task: TerraformTaskV2@2
+    inputs:
+      provider: 'azurerm'
+      command: 'apply'  # Run terraform apply
+      environmentServiceNameAzureRM: $(azureServiceConnection)
+      commandOptions: 'plan.tfplan'  # Apply the plan from the file
+      workingDirectory: 'terraform'  # Set the working directory
 
-- task: TerraformTaskV4@4
-  inputs:
-    provider: 'azurerm'
-    command: 'init'
-
-- task: TerraformTaskV4@4
-  inputs:
-    provider: 'azurerm'
-    command: 'apply'
-    commandOptions: --auto-approve
+  - task: PublishBuildArtifacts@1  # Optional: Publish artifacts (like plan or state files)
+    inputs:
+      pathToPublish: './terraform/terraform.tfstate'
+      artifactName: 'terraform'
+      publishLocation: 'Container'
