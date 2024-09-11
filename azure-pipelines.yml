@@ -25,7 +25,7 @@ stages:
               terraformVersion: $(terraformVersion)
 
           # Initialize Terraform
-          - task: TerraformTaskV2@2
+          - task: TerraformTaskV4@4
             inputs:
               provider: 'azurerm'
               backendServiceArm: $(azureServiceConnection)
@@ -33,14 +33,14 @@ stages:
               backendAzureRmStorageAccountName: $(backendStorageAccount)
               backendAzureRmContainerName: $(backendContainer)
               backendAzureRmKey: $(backendKey)
-              command: 'init -verbose'  # Initialize Terraform
+              command: 'init'  # Initialize Terraform
               workingDirectory: 'terraform'  # Set the working directory
 
           # Validate Terraform configuration
-          - task: TerraformTaskV2@2
+          - task: TerraformTaskV4@4
             inputs:
               provider: 'azurerm'
-              command: 'validate -verbose'  # Validate Terraform configuration
+              command: 'validate'  # Validate Terraform configuration
               workingDirectory: 'terraform'
 
   # Stage 2: Plan
@@ -49,10 +49,10 @@ stages:
     jobs:
       - job: TerraformPlan
         steps:
-          - task: TerraformTaskV2@2
+          - task: TerraformTaskV4@4
             inputs:
               provider: 'azurerm'
-              command: 'plan -verbose'  # Run terraform plan
+              command: 'plan'  # Run terraform plan
               backendServiceArm: $(azureServiceConnection)
               workingDirectory: 'terraform'  # Set the working directory
 
@@ -74,7 +74,7 @@ stages:
               onTimeout: 'resume'
       - job: TerraformApply
         steps:
-          - task: TerraformTaskV2@2
+          - task: TerraformTaskV4@4
             inputs:
               provider: 'azurerm'
               command: 'apply'  # Run terraform apply
