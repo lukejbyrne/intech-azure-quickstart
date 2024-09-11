@@ -53,6 +53,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'plan'  # Run terraform plan
+              environmentServiceNameAzureRM: $(azureServiceConnection)  # Azure service connection for authentication
               backendServiceArm: $(azureServiceConnection)
               workingDirectory: 'terraform'  # Set the working directory
 
