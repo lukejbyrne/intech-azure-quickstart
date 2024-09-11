@@ -33,27 +33,32 @@ stages:
               backendAzureRmStorageAccountName: $(backendStorageAccount)
               backendAzureRmContainerName: $(backendContainer)
               backendAzureRmKey: $(backendKey)
-              command: 'init'  # Initialize Terraform
+              command: 'init -verbose'  # Initialize Terraform
               workingDirectory: 'terraform'  # Set the working directory
 
           # Validate Terraform configuration
           - task: TerraformTaskV2@2
             inputs:
               provider: 'azurerm'
-              command: 'validate'  # Validate Terraform configuration
+              command: 'validate -verbose'  # Validate Terraform configuration
               workingDirectory: 'terraform'
+
+  # Stage 2: Plan
+  - stage: Plan
+    dependsOn: Initialization  # The Plan stage depends on the Initialization stage
+    jobs:
       - job: TerraformPlan
         steps:
           - task: TerraformTaskV2@2
             inputs:
               provider: 'azurerm'
-              command: 'plan'  # Run terraform plan
+              command: 'plan -verbose'  # Run terraform plan
               backendServiceArm: $(azureServiceConnection)
               workingDirectory: 'terraform'  # Set the working directory
 
   # Stage 3: Apply (with manual approval)
   - stage: Apply
-    dependsOn: Initialization  # The Apply stage depends on the Plan stage
+    dependsOn: Plan  # The Apply stage depends on the Plan stage
     jobs:
       - job: waitForValidation
         displayName: Wait for external validation  
