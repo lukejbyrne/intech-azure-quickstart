@@ -10,6 +10,7 @@ pool:
 variables:
   terraformVersion: '1.5.5'  # Specify the Terraform version
   azureServiceConnection: 'intech'  # Azure service connection name
+  backendResourceGroup: 'skink-rg'
   backendStorageAccount: 'skinktfstate'  # Remote backend storage account
   backendContainer: 'tfstate'  # Remote backend storage container
   backendKey: 'terraform.tfstate'  # State file name in remote backend
@@ -26,6 +27,7 @@ steps:
       provider: 'azurerm'  # Azure provider
       command: 'init'  # Initialize Terraform
       backendServiceArm: $(azureServiceConnection)
+      backendAzureRmResourceGroupName: $(backendResourceGroup)
       backendAzureRmStorageAccountName: $(backendStorageAccount)
       backendAzureRmContainerName: $(backendContainer)
       backendAzureRmKey: $(backendKey)
