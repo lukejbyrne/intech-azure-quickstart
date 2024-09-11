@@ -22,15 +22,13 @@ stages:
         steps:
           - task: TerraformInstaller@0  # Install Terraform
             inputs:
-              backendServiceArm: $(azureServiceConnection)
               terraformVersion: $(terraformVersion)
-
-          - checkout: self  # Check out the repository
 
           # Initialize Terraform
           - task: TerraformTaskV2@2
             inputs:
               provider: 'azurerm'
+              backendServiceArm: $(azureServiceConnection)
               command: 'init'  # Initialize Terraform
               workingDirectory: 'terraform'  # Set the working directory
 
