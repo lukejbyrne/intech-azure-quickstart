@@ -33,7 +33,6 @@ stages:
               backendAzureRmStorageAccountName: $(backendStorageAccount)
               backendAzureRmContainerName: $(backendContainer)
               backendAzureRmKey: $(backendKey)
-              environmentServiceNameAzureRM: $(azureServiceConnection)  # Azure service connection for authentication
               command: 'init'  # Initialize Terraform
               workingDirectory: 'terraform'  # Set the working directory
 
@@ -54,6 +53,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'plan'  # Run terraform plan
+              environmentServiceNameAzureRM: $(azureServiceConnection)  # Azure service connection for authentication
 
               workingDirectory: 'terraform'  # Set the working directory
 
