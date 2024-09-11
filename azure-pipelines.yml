@@ -53,7 +53,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'plan'  # Run terraform plan
-              environmentServiceNameAzureRM: $(azureServiceConnection)
+              backendServiceArm: $(azureServiceConnection)
               workingDirectory: 'terraform'  # Set the working directory
 
   # Stage 3: Apply (with manual approval)
@@ -69,7 +69,7 @@ stages:
           timeoutInMinutes: 1440 # task times out in 1 day
           inputs:
               notifyUsers: |
-                  lukebyrnee97@gmail.comm
+                  lukebyrnee97@gmail.com
               instructions: 'Please validate the build configuration and resume'
               onTimeout: 'resume'
       - job: TerraformApply
@@ -78,6 +78,6 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'apply'  # Run terraform apply
-              environmentServiceNameAzureRM: $(azureServiceConnection)
+              backendServiceArm: $(azureServiceConnection)
               commandOptions: '--auto-approve'
               workingDirectory: 'terraform'  # Set the working directory
