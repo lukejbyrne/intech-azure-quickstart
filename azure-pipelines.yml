@@ -6,7 +6,6 @@ trigger:
 
 pool:
   vmImage: 'ubuntu-latest'  # Use an Ubuntu agent for the job
-  demand: 1
 
 variables:
   terraformVersion: '1.5.5'  # Specify the Terraform version
