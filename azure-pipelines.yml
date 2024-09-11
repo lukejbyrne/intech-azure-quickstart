@@ -22,6 +22,7 @@ stages:
         steps:
           - task: TerraformInstaller@0  # Install Terraform
             inputs:
+              backendServiceArm: $(azureServiceConnection)
               terraformVersion: $(terraformVersion)
 
           - checkout: self  # Check out the repository
