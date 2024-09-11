@@ -43,8 +43,6 @@ stages:
               command: 'validate'  # Validate Terraform configuration
               workingDirectory: 'terraform'
 
-      - job: TerraformPlan
-        steps:
           - task: TerraformTaskV4@4
             inputs:
               provider: 'azurerm'
