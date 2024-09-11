@@ -29,6 +29,10 @@ stages:
             inputs:
               provider: 'azurerm'
               backendServiceArm: $(azureServiceConnection)
+              backendAzureRmResourceGroupName: $(backendResourceGroup)
+              backendAzureRmStorageAccountName: $(backendStorageAccount)
+              backendAzureRmContainerName: $(backendContainer)
+              backendAzureRmKey: $(backendKey)
               command: 'init'  # Initialize Terraform
               workingDirectory: 'terraform'  # Set the working directory
 
